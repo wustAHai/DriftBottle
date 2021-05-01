@@ -33,4 +33,10 @@ public interface UserMapper {
 
     @Select("select * from info where id=#{id}")
     Info getInfoById(Long id);
+
+    @Select("select * from user where id=#{id}")
+    User getUserById(Long id);
+
+    @Update("update user set pwd = #{pwd} where id = #{id}")
+    int updateUserPassword(String pwd,Long id);
 }

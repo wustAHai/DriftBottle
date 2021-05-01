@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>扔个瓶子</title>
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link href="./css/bootstrap.css" rel="stylesheet">
+    <link href="./css/nav.css" rel="stylesheet">
+    <script src="./js/JQuery3.5.1.js"></script>
+    <script src="./js/util.js"></script>
+    <script src="./js/layer.js"></script>
+    <script src="./js/bootstrap.js"></script>
+    <style>
+        #main{
+            margin-top: 60px;
+            width: 100%;
+
+        }
+        #main-inner{
+            margin: 0 auto;
+            max-width: 1140px;
+            box-shadow: rgb(0 0 0 / 10%) 0px 1px 2px, rgb(0 0 0 / 8%) 0px 2px 8px;
+            border-radius: 8px;
+            height: 500px;
+            padding: 50px 100px;
+        }
+        #msg{
+            width: 700px;
+            height: 300px;
+            margin: 0 auto 20px;
+            display: block;
+            border: 1px rgba(0,161,214,0.5) solid;
+            font-size: 20px;
+            padding: 5px;
+        }
+
+        #send{
+            margin-left: 750px;
+        }
+    </style>
+</head>
+<body>
+<nav id="nav">
+    <div id="nav-inner">
+        <a href="/">
+            <img src="./img/bottle.png" alt="bottle" id="logo">
+        </a>
+        <ul class="ul1">
+            <li><a href="">扔个瓶子</a></li>
+            <li>标题2</li>
+            <li>标题3</li>
+            <li><a id="userWrapper"><img src='./img/user.png' id="userImg"></a>
+                <ul class="ul2">
+                    <li><a href="./userInfo.html">个人资料</a></li>
+                    <li><a href="./changePwd.html">修改密码</a></li>
+                    <li>3</li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+</nav>
+<div id="main">
+    <div id="main-inner">
+        <textarea id="msg"></textarea>
+        <button class="btn btn-success" id="send">扔一个</button>
+    </div>
+</div>
+<script>
+    $("#send").click(function (){
+       let msg =$('#msg').val();
+       if (msg.trim().length<5){
+           layer.msg("太短了，多写点吧")
+       }else {
+           $.ajax({
+               url: "/addBottle",
+               type: "post",
+               dataType: "json",
+               data: {
+                   id:localStorage.getItem("id"),
+                   msg:msg
+               },
+               success: function (data) {
+                   switch (data.code) {
+                       case 0:
+                           layer.msg(data.msg);
+                           break;
+                       case 1:
+                           layer.msg(data.msg);
+                           break;
+                   }
+               },
+               err: function (e) {
+                   console.log(e.status);
+                   console.log(e.statusText);
+               }
+           });
+       }
+    });
+</script>
+</body>
+</html>

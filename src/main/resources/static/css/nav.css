@@ -52,16 +52,16 @@ ul li {
 
 .ul1 > li:last-child:hover ul li {
     display: block;
-    vertical-align: center;
     text-align: center;
-    padding: 0 18px;
 }
 
 .ul2 {
     position: absolute;
     background-color: #ffffff;
     border-radius: 5px;
-    box-shadow: 1px 2px 3px rgba(0,0,0,0.2)
+    box-shadow: 1px 2px 3px rgba(0,0,0,0.2);
+    width: 150px;
+    padding: 0;
 }
 
 #userWrapper {
@@ -75,4 +75,11 @@ ul li {
 }
 .ul2 a{
     text-decoration: none;
+}
+.ul1>li>a{
+    text-decoration: none;
+    color: #212121;
+}
+.ul1>li>a:hover{
+    color: #00A1D6;
 }

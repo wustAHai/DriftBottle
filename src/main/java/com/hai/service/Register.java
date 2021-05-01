@@ -29,6 +29,8 @@ public class Register {
             user.setPwd(pwd);
             try {
                 if (userMapper.register(user)==1){
+                    final User userByName = userMapper.getUserByName(user.getName());
+                    userMapper.addInfo(new Info(userByName.getId(),"暂无","暂无","暂无"));
                     message.setCode(0);
                     message.setMsg("注册成功");
                 }else {
@@ -71,5 +73,36 @@ public class Register {
         }else {
             return infoById;
         }
+    }
+
+    public Message updateInfo(Info info){
+        final int i = userMapper.updateInfo(info);
+        if (i==1) {
+            return new Message(0, null, "更新成功");
+        }else {
+            return new Message(1,null,"保存失败");
+        }
+    }
+
+    public Message changePassword(Long id,String pwd,String pwd1){
+        final User userById = userMapper.getUserById(id);
+        final Message message = new Message();
+        if (userById==null){
+            message.setCode(1);
+            message.setMsg("用户不存在");
+        }else {
+            if (userById.getPwd().equals(MD5Tool.getMD5(pwd))){
+                if (userMapper.updateUserPassword(MD5Tool.getMD5(pwd1),id)==1){
+                    message.setMsg("更新成功");
+                }else {
+                    message.setCode(1);
+                    message.setMsg("更新密码失败");
+                }
+            }else {
+                message.setCode(1);
+                message.setMsg("原始密码错误");
+            }
+        }
+        return message;
     }
 }

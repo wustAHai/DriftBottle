@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>捞个瓶子</title>
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link href="./css/bootstrap.css" rel="stylesheet">
+    <link href="./css/nav.css" rel="stylesheet">
+    <script src="./js/JQuery3.5.1.js"></script>
+    <script src="./js/util.js"></script>
+    <script src="./js/layer.js"></script>
+    <script src="./js/bootstrap.js"></script>
+    <style>
+        #main{
+            margin-top: 30px;
+            width: 100%;
+        }
+        #main-inner{
+            margin: 0 auto;
+            max-width: 1400px;
+            box-shadow: rgb(0 0 0 / 10%) 0px 1px 2px, rgb(0 0 0 / 8%) 0px 2px 8px;
+            border-radius: 8px;
+            height:600px;
+            padding: 50px 100px;
+            background-image: url("./img/wave.png");
+            position: relative;
+        }
+        #wang{
+            width: 128px;
+            height: 128px;
+            background-image: url("./img/wang.png");
+            position: absolute;
+            left: 950px;
+            top: 400px;
+            transition: 2s;
+            cursor: pointer;
+        }
+        #userInfo{
+            color: #00A1D6;
+            display: inline-block;
+            margin: 0 5px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        .tooltip-inner{
+            background: rgba(230,230,230,0.5)!important; /*修改背景色*/
+            text-align: left !important;/*字体左对齐*/
+            color:#00A1D6 !important;/*字体颜色*/
+            font-size: 15px;
+            font-weight: 500;
+        }
+        .tooltip-arrow{
+            border-bottom-color: #e7e7e7 !important;//修改三角形的颜色
+            opacity: 1;//三角形透明
+        }
+        .tooltip{
+            opacity: 1 !important;//让整个tooltip不透明
+        }
+        #star{
+            font-size: 30px;
+            color: #5e5e5e;
+            vertical-align: center;
+            display: inline-block;
+            margin-left: 470px;
+            margin-right: 30px;
+        }
+        #star:hover{
+            color: #00A1D6;
+        }
+        #back{
+            font-size: 30px;
+            color: #5e5e5e;
+            vertical-align: center;
+            display: inline-block;
+        }
+        #back:hover{
+            color: #00A1D6;
+        }
+        #msg{
+            border: gray 1px solid;
+            padding: 5px;
+            height: 100px;
+            width: 100%;
+            border-radius: 5px;
+        }
+        #send{
+            font-size: 30px;
+            color: #5e5e5e;
+            padding-top: 5px;
+            display: inline-block;
+        }
+        #send:hover{
+            color: #00A1D6;
+        }
+        #reply{
+            width: 100%;
+            height: 100px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+<nav id="nav">
+    <div id="nav-inner">
+        <a href="/">
+            <img src="./img/bottle.png" alt="bottle" id="logo">
+        </a>
+        <ul class="ul1">
+            <li><a href="./sendBottle.html">扔个瓶子</a></li>
+            <li><a href="./getBottle.html">捞个瓶子</a></li>
+            <li>标题3</li>
+            <li><a id="userWrapper"><img src='./img/user.png' id="userImg"></a>
+                <ul class="ul2">
+                    <li><a href="./userInfo.html">个人资料</a></li>
+                    <li><a href="./changePwd.html">修改密码</a></li>
+                    <li>3</li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+</nav>
+<div id="main">
+    <div id="main-inner">
+        <div id="wang"></div>
+    </div>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">您捞到了<span id="userInfo"></span>的瓶子</h4>
+            </div>
+            <div class="modal-body">
+                <textarea id="msg" disabled></textarea>
+                <span class="glyphicon glyphicon-star" aria-hidden="true" id="star"> </span>
+                <span class="glyphicon glyphicon-circle-arrow-up" aria-hidden="true" id="back"> </span>
+            </div>
+            <div class="modal-footer">
+                <textarea id="reply"></textarea>
+                <span class="glyphicon glyphicon-send" aria-hidden="true" id="send"> </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var bottleId;
+    $('#wang').click(function (){
+        $('#wang').css('transform','rotate(-150deg)');
+        setTimeout(function (){
+            $('#wang').css('transform','rotate(0deg)');
+        },2000);
+        $.ajax({
+            url: "/getBottle",
+            type: "get",
+            dataType: "json",
+            data: {
+                id:localStorage.getItem("id")
+            },
+            success: function (data) {
+                switch (data.code) {
+                    case 0:
+                        showData(data.data)
+                        break;
+                    case 1:
+                        layer.msg(data.msg);
+                        break;
+                }
+            },
+            err: function (e) {
+                console.log(e.status);
+                console.log(e.statusText);
+            }
+        });
+    });
+    function showData(data){
+        $('#myModal').modal("toggle");
+        $('#userInfo').text(data[0].nickname);
+        $('#userInfo').tooltip({'placement':'bottom','html':true,'title':"<p>位置："+data[0].location+"</p><p>个人简介: "+data[0].description+"</p>"})
+        $('#msg').text(data[1].msg);
+        bottleId=data[1].id;
+    }
+    $('#star').click(function (){
+        $.ajax({
+            url: "/collectBottle",
+            type: "post",
+            dataType: "json",
+            data: {
+                id:localStorage.getItem("id"),
+                bId:bottleId
+            },
+            success: function (data) {
+                switch (data.code) {
+                    case 0:
+                        layer.msg(data.msg);
+                        break;
+                    case 1:
+                        layer.msg(data.msg);
+                        break;
+                }
+            },
+            err: function (e) {
+                console.log(e.status);
+                console.log(e.statusText);
+            }
+        });
+    });
+</script>
+</body>
+</html>

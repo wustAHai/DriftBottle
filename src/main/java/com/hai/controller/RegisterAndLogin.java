@@ -65,6 +65,13 @@ public class RegisterAndLogin {
         return message;
     }
 
+    @PostMapping("/updateInfo")
+    public Message updateInfo(Info info){
+        return register.updateInfo(info);
+    }
 
-
+    @PostMapping("/changePassword")
+    public Message changePassword(Long id,String pwd,String pwd1){
+        return  register.changePassword(id,pwd,pwd1);
+    }
 }
