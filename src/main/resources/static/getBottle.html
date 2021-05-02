@@ -68,7 +68,7 @@
             margin-right: 30px;
         }
         #star:hover{
-            color: #00A1D6;
+            cursor: pointer;
         }
         #back{
             font-size: 30px;
@@ -78,6 +78,7 @@
         }
         #back:hover{
             color: #00A1D6;
+            cursor: pointer;
         }
         #msg{
             border: gray 1px solid;
@@ -94,6 +95,7 @@
         }
         #send:hover{
             color: #00A1D6;
+            cursor: pointer;
         }
         #reply{
             width: 100%;
@@ -183,6 +185,7 @@
         $('#userInfo').text(data[0].nickname);
         $('#userInfo').tooltip({'placement':'bottom','html':true,'title':"<p>位置："+data[0].location+"</p><p>个人简介: "+data[0].description+"</p>"})
         $('#msg').text(data[1].msg);
+        $('#reply').text("");
         bottleId=data[1].id;
     }
     $('#star').click(function (){
@@ -198,6 +201,34 @@
                 switch (data.code) {
                     case 0:
                         layer.msg(data.msg);
+                        $('#star').css('color','#00A1D6')
+                        break;
+                    case 1:
+                        layer.msg(data.msg);
+                        $('#star').css('color','#5e5e5e')
+                        break;
+                }
+            },
+            err: function (e) {
+                console.log(e.status);
+                console.log(e.statusText);
+            }
+        });
+    });
+    $('#back').click(function (){
+        $.ajax({
+            url: "/backBottle",
+            type: "post",
+            dataType: "json",
+            data: {
+                bId:bottleId
+            },
+            success: function (data) {
+                switch (data.code) {
+                    case 0:
+                        layer.msg(data.msg);
+                        $('#star').css('color','#5e5e5e')
+                        $('#myModal').modal('toggle');
                         break;
                     case 1:
                         layer.msg(data.msg);
@@ -209,6 +240,37 @@
                 console.log(e.statusText);
             }
         });
+    });
+    $('#send').click(function (){
+        let reply =$('#reply').val();
+        if (reply.trim().length<5){
+            layer.msg("太短了，多写点吧")
+        }else {
+            $.ajax({
+                url: "/addBottle",
+                type: "post",
+                dataType: "json",
+                data: {
+                    id:localStorage.getItem("id"),
+                    msg:msg
+                },
+                success: function (data) {
+                    switch (data.code) {
+                        case 0:
+                            layer.msg(data.msg);
+                            $("#msg").val("");
+                            break;
+                        case 1:
+                            layer.msg(data.msg);
+                            break;
+                    }
+                },
+                err: function (e) {
+                    console.log(e.status);
+                    console.log(e.statusText);
+                }
+            });
+        }
     });
 </script>
 </body>

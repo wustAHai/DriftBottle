@@ -32,7 +32,13 @@ public class BottleController {
     }
 
     @PostMapping("/collectBottle")
-    public Message collectBottle(){
-
+    public Message collectBottle(long id,long bId){
+        return bottleService.collectBottle(id,bId);
     }
+
+    @PostMapping("/backBottle")
+    public Message backBottle(long bId){
+        return bottleService.backBottle(bId);
+    }
+
 }

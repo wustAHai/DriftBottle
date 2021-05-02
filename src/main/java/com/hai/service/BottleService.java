@@ -49,4 +49,20 @@ public class BottleService {
         objects[1]=bottle;
         return  new Message(0,objects,"捞到了瓶子");
     }
+
+    public Message collectBottle(long id,long bId){
+        final Bottle bottle = bottleMapper.getBottle(bId);
+        if (bottle.getStatus()==1){
+            bottleMapper.collectBottle(id,bId);
+            return new Message(0,null,"收藏成功");
+        }else {
+            bottleMapper.backCollect(bId);
+            return new Message(1,null,"取消收藏成功");
+        }
+    }
+
+    public Message backBottle(long bId) {
+        bottleMapper.backBottle(bId);
+        return  new Message(0,null,"扔回海里了");
+    }
 }

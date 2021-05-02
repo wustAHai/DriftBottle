@@ -25,4 +25,13 @@ public interface BottleMapper {
 
     @Update("update bottle set status=1 where id = #{id}")
     void updateBottle(long id);
+
+    @Update("update bottle set status=2 , getId=#{id} where id=#{bId}")
+    void collectBottle(long id , long bId );
+
+    @Update("update bottle set status=1, getId=null where id=#{id}")
+    void backCollect(long id);
+
+    @Update("update bottle set status=0,getId=null where id=#{id}")
+    void backBottle(long id);
 }
