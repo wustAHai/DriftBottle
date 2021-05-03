@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>个人信息</title>
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link href="./css/bootstrap.css" rel="stylesheet">
+    <link href="./css/nav.css" rel="stylesheet">
+    <script src="./js/JQuery3.5.1.js"></script>
+    <script src="./js/util.js"></script>
+    <script src="./js/layer.js"></script>
+    <script src="./js/bootstrap.js"></script>
+    <style>
+        #main{
+            margin-top: 60px;
+            width: 100%;
+
+        }
+        #main-inner{
+            margin: 0 auto;
+            max-width: 1140px;
+            box-shadow: rgb(0 0 0 / 10%) 0px 1px 2px, rgb(0 0 0 / 8%) 0px 2px 8px;
+            border-radius: 8px;
+            height: 500px;
+            padding: 50px 100px;
+        }
+        #info{
+            width: 600px;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+<nav id="nav">
+    <div id="nav-inner">
+        <a href="/">
+            <img src="./img/bottle.png" alt="bottle" id="logo">
+        </a>
+        <ul class="ul1">
+            <li>标题1</li>
+            <li>标题2</li>
+            <li>标题3</li>
+            <li><a id="userWrapper"><img src='./img/user.png' id="userImg"></a>
+                <ul class="ul2">
+                    <li><a href="./userInfo.html">个人资料</a></li>
+                    <li>2</li>
+                    <li>3</li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+</nav>
+<div id="main">
+    <div id="main-inner">
+        <form class="form-horizontal" id="info" autocomplete="off">
+            <div class="form-group">
+                <label for="nickname" class="col-sm-3 control-label">昵称</label>
+                <div class="col-sm-9">
+                    <input type="text" class="form-control" id="nickname">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="location" class="col-sm-3 control-label">地址</label>
+                <div class="col-sm-9">
+                    <input type="text" class="form-control" id="location" >
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="des" class="col-sm-3 control-label">个性签名</label>
+                <div class="col-sm-9">
+                    <input type="text" class="form-control" id="des" >
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-offset-3 col-sm-9">
+                    <button id="submit" class="btn btn-success">保存</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<script>
+    getInfo();
+$("#submit").click(function (e){
+    e.preventDefault();
+    let nickname=$('#nickname').val();
+    let location=$('#location').val();
+    let des=$('#des').val();
+    if (checkForm(nickname,location,des)){
+        $.ajax({
+            url: "/updateInfo",
+            type: "post",
+            dataType: "json",
+            data: {
+                id:localStorage.getItem("id"),
+                nickname:nickname,
+                location:location,
+                description:des
+            },
+            success: function (data) {
+                switch (data.code) {
+                    case 0:
+                        layer.msg(data.msg);
+                        getInfo();
+                        break;
+                    case 1:
+                        layer.msg(data.msg);
+                        break;
+                }
+            },
+            err: function (e) {
+                console.log(e.status);
+                console.log(e.statusText);
+            }
+        });
+    }else {
+        layer.msg("检查一下表单吧")
+    }
+})
+function getInfo(){
+    $.ajax({
+        url: "/getInfo",
+        type: "get",
+        dataType: "json",
+        data: {
+            id:localStorage.getItem("id")
+        },
+        success: function (data) {
+            switch (data.code) {
+                case 0:
+                    $('#nickname').val(data.data.nickname);
+                    $('#location').val(data.data.location);
+                    $('#des').val(data.data.description);
+                    break;
+                case 1:
+                    layer.msg(data.msg);
+                    break;
+            }
+        },
+        err: function (e) {
+            console.log(e.status);
+            console.log(e.statusText);
+        }
+    });
+}
+</script>
+</body>
+</html>

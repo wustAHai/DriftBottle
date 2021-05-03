@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>修改密码</title>
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link href="./css/bootstrap.css" rel="stylesheet">
+    <link href="./css/nav.css" rel="stylesheet">
+    <script src="./js/JQuery3.5.1.js"></script>
+    <script src="./js/util.js"></script>
+    <script src="./js/layer.js"></script>
+    <script src="./js/bootstrap.js"></script>
+    <style>
+        #main{
+            margin-top: 60px;
+            width: 100%;
+
+        }
+        #main-inner{
+            margin: 0 auto;
+            max-width: 1140px;
+            box-shadow: rgb(0 0 0 / 10%) 0px 1px 2px, rgb(0 0 0 / 8%) 0px 2px 8px;
+            border-radius: 8px;
+            height: 500px;
+            padding: 50px 100px;
+        }
+        #info{
+            width: 600px;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+<nav id="nav">
+    <div id="nav-inner">
+        <a href="/">
+            <img src="./img/bottle.png" alt="bottle" id="logo">
+        </a>
+        <ul class="ul1">
+            <li>标题1</li>
+            <li>标题2</li>
+            <li>标题3</li>
+            <li><a id="userWrapper"><img src='./img/user.png' id="userImg"></a>
+                <ul class="ul2">
+                    <li><a href="./userInfo.html">个人资料</a></li>
+                    <li>2</li>
+                    <li>3</li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+</nav>
+<div id="main">
+    <div id="main-inner">
+        <form class="form-horizontal" id="info" autocomplete="off">
+            <div class="form-group">
+                <label for="pwd" class="col-sm-3 control-label">原密码</label>
+                <div class="col-sm-9">
+                    <input type="password" class="form-control" id="pwd">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="pwd1" class="col-sm-3 control-label">新密码</label>
+                <div class="col-sm-9">
+                    <input type="password" class="form-control" id="pwd1" >
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="pwd2" class="col-sm-3 control-label">确认密码</label>
+                <div class="col-sm-9">
+                    <input type="password" class="form-control" id="pwd2" >
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-offset-3 col-sm-9">
+                    <button id="submit" class="btn btn-success">保存</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<script>
+    $("#submit").click(function (e){
+        e.preventDefault();
+        let pwd=$('#pwd').val();
+        let pwd1=$('#pwd1').val();
+        let pwd2=$('#pwd2').val();
+        if (checkForm(pwd,pwd1,pwd2)&&pwd1==pwd2){
+            $.ajax({
+                url: "/changePassword",
+                type: "post",
+                dataType: "json",
+                data: {
+                    id:localStorage.getItem("id"),
+                    pwd:pwd,
+                    pwd1:pwd1,
+                },
+                success: function (data) {
+                    switch (data.code) {
+                        case 0:
+                            layer.msg(data.msg);
+                            getInfo();
+                            break;
+                        case 1:
+                            layer.msg(data.msg);
+                            break;
+                    }
+                },
+                err: function (e) {
+                    console.log(e.status);
+                    console.log(e.statusText);
+                }
+            });
+        }else {
+            layer.msg("检查一下表单吧")
+        }
+    })
+</script>
+</body>
+</html>

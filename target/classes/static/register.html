@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>注册页面</title>
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link href="./css/bootstrap.css" rel="stylesheet">
+    <script src="./js/JQuery3.5.1.js"></script>
+    <script src="./js/util.js"></script>
+    <script src="./js/layer.js"></script>
+    <script src="./js/bootstrap.js"></script>
+    <style>
+        .main{
+            background-image: url("./img/bg1.jpg");
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 100%;
+            min-width: 1000px;
+            z-index: -10;
+            background-position: center bottom;
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-color: #e2ebf8;
+        }
+        .myForm{
+            margin: 150px auto;
+            width:500px;
+            padding:50px 40px 20px 20px;
+            background-color: rgba(240,240,240,0.5);
+            border-radius: 20px;
+        }
+    </style>
+</head>
+<body>
+<div class="main">
+    <form  class="form-horizontal myForm"  >
+        <div class="form-group">
+            <label for="username" class="col-sm-3 control-label">用户名</label>
+            <div class="col-sm-9">
+                <input type="text" class="form-control" id="username" name="name" required>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="pwd" class="col-sm-3 control-label">密码</label>
+            <div class="col-sm-9">
+                <input type="password" class="form-control" id="pwd" name="password" required>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="pwd" class="col-sm-3 control-label">密码确认</label>
+            <div class="col-sm-9">
+                <input type="password" class="form-control" id="pwd1" name="pwd1">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="checkCode" class="col-sm-3 control-label">验证码</label>
+            <div class="col-sm-9">
+                <input type="text" class="form-control" id="checkCode" name="checkCode" autocomplete="off" required >
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-offset-3 col-sm-9">
+                <img src="/getImg" id="checkImg" alt="验证码">
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-offset-3 col-sm-9">
+                <button type="submit" class="btn btn-success"  id="sub">登 录</button>
+            </div>
+        </div>
+    </form>
+</div>
+<script>
+    let img = document.getElementById("checkImg");
+    img.onclick = function () {
+        img.src = "/getImg?" + Date.now();
+    }
+    $("#sub").click(function (e){
+        e.preventDefault();
+        send();
+    })
+    function send() {
+        let name = $("#username").val();
+        let pwd = $("#pwd").val();
+        let checkCode = $("#checkCode").val();
+        let pwd1 = $("#pwd1").val();
+        if (checkForm(name,pwd,checkCode)&&pwd===pwd1){
+            $.ajax({
+                url: "/register",
+                type: "post",
+                dataType: "json",
+                data:{
+                    "name":name,
+                    "pwd":pwd,
+                    "checkCode":checkCode
+                },
+                success: function (data) {
+                    switch (data.code) {
+                        case 0:
+                            layer.msg(data.msg)
+                            location.href="/index.html";
+                            break;
+                        case 1:
+                            layer.msg(data.msg);
+                            img.src = "/getImg?" + Date.now();
+                            break;
+                    }
+                },
+                err: function (e) {
+                    console.log(e.status);
+                    console.log(e.statusText);
+                }
+            });
+        }else {
+            layer.msg('检查一下表单吧');
+        }
+    }
+</script>
+</body>
+</html>

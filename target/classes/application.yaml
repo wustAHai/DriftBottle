@@ -1,0 +1,27 @@
+spring:
+  datasource:
+    driverClassName: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/driftbottle?serverTimezone=Asia/Shanghai
+    username: root
+    password: 123456
+  mvc:
+    favicon:
+      enabled: false
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+
+server:
+  port: 80
+
+logging:
+  level:
+    com.hai: debug
+    org.spring: info
+
+mybatis:
+  type-aliases-package: com.hai.pojo
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+
