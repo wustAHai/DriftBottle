@@ -15,9 +15,10 @@ import java.util.Date;
 public class Reply {
     private Long id;
     private Long bottleId;
+    private Long replyId;
     private Long fromId;
     private Long toId;
     private String msg;
-    private int read;
+    private int status;
     private Date time;
 }

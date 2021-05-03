@@ -152,6 +152,7 @@
 
 <script>
     var bottleId;
+    var getData;
     $('#wang').click(function (){
         $('#wang').css('transform','rotate(-150deg)');
         setTimeout(function (){
@@ -184,9 +185,10 @@
         $('#myModal').modal("toggle");
         $('#userInfo').text(data[0].nickname);
         $('#userInfo').tooltip({'placement':'bottom','html':true,'title':"<p>位置："+data[0].location+"</p><p>个人简介: "+data[0].description+"</p>"})
-        $('#msg').text(data[1].msg);
-        $('#reply').text("");
+        $('#msg').val(data[1].msg);
+        $('#reply').val("");
         bottleId=data[1].id;
+        getData=data;
     }
     $('#star').click(function (){
         $.ajax({
@@ -247,18 +249,20 @@
             layer.msg("太短了，多写点吧")
         }else {
             $.ajax({
-                url: "/addBottle",
+                url: "/reply",
                 type: "post",
                 dataType: "json",
                 data: {
-                    id:localStorage.getItem("id"),
-                    msg:msg
+                    bottleId:bottleId,
+                    fromId:localStorage.getItem("id"),
+                    toId:getData[0].id,
+                    msg:reply
                 },
                 success: function (data) {
                     switch (data.code) {
                         case 0:
                             layer.msg(data.msg);
-                            $("#msg").val("");
+                            $("#myModal").modal('toggle');
                             break;
                         case 1:
                             layer.msg(data.msg);
