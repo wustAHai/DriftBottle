@@ -113,12 +113,12 @@
         <ul class="ul1">
             <li><a href="./sendBottle.html">扔个瓶子</a></li>
             <li><a href="./getBottle.html">捞个瓶子</a></li>
-            <li>标题3</li>
+            <li><a href="./myReply.html">未读消息</a><span id="dot"></span></li>
             <li><a id="userWrapper"><img src='./img/user.png' id="userImg"></a>
                 <ul class="ul2">
                     <li><a href="./userInfo.html">个人资料</a></li>
                     <li><a href="./changePwd.html">修改密码</a></li>
-                    <li>3</li>
+                    <li><a href="./myBottles.html">我的收藏</a></li>
                 </ul>
             </li>
         </ul>
@@ -153,6 +153,7 @@
 <script>
     var bottleId;
     var getData;
+    showDot();
     $('#wang').click(function (){
         $('#wang').css('transform','rotate(-150deg)');
         setTimeout(function (){
@@ -262,7 +263,7 @@
                     switch (data.code) {
                         case 0:
                             layer.msg(data.msg);
-                            $("#myModal").modal('toggle');
+                            $('#reply').val("");
                             break;
                         case 1:
                             layer.msg(data.msg);

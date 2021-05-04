@@ -113,12 +113,12 @@
         <ul class="ul1">
             <li><a href="./sendBottle.html">扔个瓶子</a></li>
             <li><a href="./getBottle.html">捞个瓶子</a></li>
-            <li>标题3</li>
+            <li><a href="./myReply.html">未读消息</a><span id="dot"></span></li>
             <li><a id="userWrapper"><img src='./img/user.png' id="userImg"></a>
                 <ul class="ul2">
                     <li><a href="./userInfo.html">个人资料</a></li>
                     <li><a href="./changePwd.html">修改密码</a></li>
-                    <li>3</li>
+                    <li><a href="./myBottles.html">我的收藏</a></li>
                 </ul>
             </li>
         </ul>
@@ -152,6 +152,8 @@
 
 <script>
     var bottleId;
+    var getData;
+    showDot();
     $('#wang').click(function (){
         $('#wang').css('transform','rotate(-150deg)');
         setTimeout(function (){
@@ -184,9 +186,10 @@
         $('#myModal').modal("toggle");
         $('#userInfo').text(data[0].nickname);
         $('#userInfo').tooltip({'placement':'bottom','html':true,'title':"<p>位置："+data[0].location+"</p><p>个人简介: "+data[0].description+"</p>"})
-        $('#msg').text(data[1].msg);
-        $('#reply').text("");
+        $('#msg').val(data[1].msg);
+        $('#reply').val("");
         bottleId=data[1].id;
+        getData=data;
     }
     $('#star').click(function (){
         $.ajax({
@@ -247,18 +250,20 @@
             layer.msg("太短了，多写点吧")
         }else {
             $.ajax({
-                url: "/addBottle",
+                url: "/reply",
                 type: "post",
                 dataType: "json",
                 data: {
-                    id:localStorage.getItem("id"),
-                    msg:msg
+                    bottleId:bottleId,
+                    fromId:localStorage.getItem("id"),
+                    toId:getData[0].id,
+                    msg:reply
                 },
                 success: function (data) {
                     switch (data.code) {
                         case 0:
                             layer.msg(data.msg);
-                            $("#msg").val("");
+                            $('#reply').val("");
                             break;
                         case 1:
                             layer.msg(data.msg);

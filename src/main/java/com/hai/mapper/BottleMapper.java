@@ -34,4 +34,7 @@ public interface BottleMapper {
 
     @Update("update bottle set status=0,getId=null where id=#{id}")
     void backBottle(long id);
+
+    @Select("select * from bottle where getId=#{id} order by id desc")
+    List<Bottle> getMyBottles(long id);
 }

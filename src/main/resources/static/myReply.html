@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>我的消息</title>
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link href="./css/bootstrap.css" rel="stylesheet">
+    <link href="./css/nav.css" rel="stylesheet">
+    <script src="./js/JQuery3.5.1.js"></script>
+    <script src="./js/util.js"></script>
+    <script src="./js/layer.js"></script>
+    <script src="./js/bootstrap.js"></script>
+    <style>
+        .reply{
+            margin: 50px auto;
+            max-width: 1120px;
+            box-shadow: rgb(0 0 0 / 10%) 0px 1px 2px, rgb(0 0 0 / 8%) 0px 2px 8px;
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-size: 20px;
+            font-weight: 500;
+        }
+        .nickname{
+            font-weight: 600;
+            color: #00A1D6;
+            font-size: 30px;
+        }
+        #msg{
+            border: gray 1px solid;
+            padding: 5px;
+            height: 100px;
+            width: 100%;
+            border-radius: 5px;
+        }
+        #send{
+            font-size: 30px;
+            color: #5e5e5e;
+            padding-top: 5px;
+            display: inline-block;
+        }
+        #send:hover{
+            color: #00A1D6;
+            cursor: pointer;
+        }
+        #reply{
+            width: 100%;
+            height: 100px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+<nav id="nav">
+    <div id="nav-inner">
+        <a href="/">
+            <img src="./img/bottle.png" alt="bottle" id="logo">
+        </a>
+        <ul class="ul1">
+            <li><a href="./sendBottle.html">扔个瓶子</a></li>
+            <li><a href="./getBottle.html">捞个瓶子</a></li>
+            <li><a href="./myReply.html">未读消息</a><span id="dot"></span></li>
+            <li><a id="userWrapper"><img src='./img/user.png' id="userImg"></a>
+                <ul class="ul2">
+                    <li><a href="./userInfo.html">个人资料</a></li>
+                    <li><a href="./changePwd.html">修改密码</a></li>
+                    <li><a href="./myBottles.html">我的收藏</a></li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+</nav>
+<div id="wrapper">
+
+</div>
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Ta的回复</h4>
+            </div>
+            <div class="modal-body">
+                <textarea id="msg" disabled></textarea>
+            </div>
+            <div class="modal-footer">
+                <textarea id="reply"></textarea>
+                <span class="glyphicon glyphicon-send" aria-hidden="true" id="send"> </span>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    var res;
+    showDot();
+    $.ajax({
+        url: "/getReply",
+        type: "get",
+        dataType: "json",
+        data: {
+            id:localStorage.getItem("id")
+        },
+        success: function (data) {
+            switch (data.code) {
+                case 0:
+                    layer.msg(data.msg);
+                    showResults(data.data);
+                    break;
+                case 1:
+                    layer.msg(data.msg);
+                    break;
+            }
+        },
+        err: function (e) {
+            console.log(e.status);
+            console.log(e.statusText);
+        }
+    });
+    function showResults(results){
+        res=results;
+        $("#wrapper").empty();
+        for (let i = 0; i < results.length; i++) {
+            let bottle = results[i].bottle;
+            let info = results[i].info;
+            let reply = results[i].reply;
+            $("#wrapper").append("<div class=\"reply\"><p> <span class=\"nickname\">"+info.nickname+"</span> 在 \" "+bottle.msg+" \"  中回复了你"+"</p><button class=\"btn btn-info\" style=\"margin-left: 900px\" onclick='showReply("+i+")'>查看详情</button></div>");
+        }
+    }
+    function showReply(index){
+        $("#myModal").modal("toggle");
+        setStatus(index);
+        $("#msg").val(res[index].reply.msg);
+        $("#send").unbind();
+        $("#send").click(function (){
+            let reply =$('#reply').val();
+            if (reply.trim().length<5){
+                layer.msg("太短了，多写点吧")
+            }else {
+                $.ajax({
+                    url: "/r2r",
+                    type: "post",
+                    dataType: "json",
+                    data: {
+                        bottleId:res[index].bottle.id,
+                        replyId:res[index].reply.id,
+                        fromId:localStorage.getItem("id"),
+                        toId:res[index].reply.fromId,
+                        msg:reply
+                    },
+                    success: function (data) {
+                        switch (data.code) {
+                            case 0:
+                                layer.msg(data.msg);
+                                $('#reply').val("");
+                                break;
+                            case 1:
+                                layer.msg(data.msg);
+                                break;
+                        }
+                    },
+                    err: function (e) {
+                        console.log(e.status);
+                        console.log(e.statusText);
+                    }
+                });
+            }
+        });
+    }
+    function setStatus(index){
+        $.ajax({
+            url: "/setStatus",
+            type: "post",
+            dataType: "json",
+            data: {
+                id:res[index].reply.id
+            },
+            success: function (data) {
+                switch (data.code) {
+                    case 0:
+                        console.log(data.msg);
+                        break;
+                    case 1:
+                        break;
+                }
+            },
+            err: function (e) {
+                console.log(e.status);
+                console.log(e.statusText);
+            }
+        });
+    }
+</script>
+</body>
+</html>

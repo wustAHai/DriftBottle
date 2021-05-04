@@ -65,4 +65,9 @@ public class BottleService {
         bottleMapper.backBottle(bId);
         return  new Message(0,null,"扔回海里了");
     }
+
+    public Message getMyBottles(long id){
+        final List<Bottle> myBottles = bottleMapper.getMyBottles(id);
+        return new Message(0,myBottles,"更新成功"+myBottles.size()+"条数据");
+    }
 }

@@ -83,3 +83,12 @@ ul li {
 .ul1>li>a:hover{
     color: #00A1D6;
 }
+#dot{
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border-radius: 8px;
+    background-color:#ffffff;
+    position: absolute;
+    top: 25px;
+}

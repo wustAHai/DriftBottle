@@ -74,4 +74,16 @@ public class RegisterAndLogin {
     public Message changePassword(Long id,String pwd,String pwd1){
         return  register.changePassword(id,pwd,pwd1);
     }
+
+    @GetMapping("/checkLogin")
+    public Message checkLogin(HttpServletRequest request){
+        final HttpSession session = request.getSession();
+        final Object name = session.getAttribute("name");
+        if (name==null){
+            return new Message(1,null,"您没有登录");
+        }else {
+            return new Message(0,null,"已登录");
+        }
+    }
+
 }

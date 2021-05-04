@@ -41,4 +41,9 @@ public class BottleController {
         return bottleService.backBottle(bId);
     }
 
+    @GetMapping("/getBottles")
+    public Message getBottles(long id){
+        return bottleService.getMyBottles(id);
+    }
+
 }
